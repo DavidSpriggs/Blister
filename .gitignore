@@ -12,4 +12,15 @@ logs
 results
 
 npm-debug.log
-node_modules
+
+bower_components/*
+public/vendor/*
+node_modules/*
+!node_modules/drywall-sendmail
+!node_modules/drywall-slugify
+!node_modules/drywall-workflow
+*.min.js
+*.min.js.map
+*.min.css
+/config.js
+.nodemonignore
