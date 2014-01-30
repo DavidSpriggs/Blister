@@ -2,10 +2,10 @@
 
 exports.port = process.env.PORT || 3000;
 exports.mongodb = {
-  uri: process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'localhost/drywall'
+  uri: process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'localhost/blister'
 };
 exports.companyName = 'Acme, Inc.';
-exports.projectName = 'Drywall';
+exports.projectName = 'Blister';
 exports.systemEmail = 'your@email.addy';
 exports.cryptoKey = 'k3yb0ardc4t';
 exports.loginAttempts = {
@@ -38,5 +38,9 @@ exports.oauth = {
   github: {
     key: process.env.GITHUB_OAUTH_KEY || '',
     secret: process.env.GITHUB_OAUTH_SECRET || ''
+  },
+  arcgis: {
+    key: process.env.ARCGIS_OAUTH_KEY || '',
+    secret: process.env.ARCGIS_OAUTH_SECRET || ''
   }
 };
