@@ -63,6 +63,10 @@ app.configure(function(){
   app.set('facebook-oauth-key', config.oauth.facebook.key);
   app.set('facebook-oauth-secret', config.oauth.facebook.secret);
 
+  //arcgis settings
+  app.set('arcgis-oauth-key', config.oauth.arcgis.key);
+  app.set('arcgis-oauth-secret', config.oauth.arcgis.secret);
+
   //middleware
   app.use(express.logger('dev'));
   app.use(express.compress());

@@ -15,6 +15,7 @@ exports = module.exports = function(app, mongoose) {
     resetPasswordExpires: Date,
     twitter: {},
     github: {},
+    arcgis: {},
     facebook: {},
     search: [String]
   });
@@ -66,6 +67,7 @@ exports = module.exports = function(app, mongoose) {
   userSchema.index({ 'twitter.id': 1 });
   userSchema.index({ 'github.id': 1 });
   userSchema.index({ 'facebook.id': 1 });
+  userSchema.index({ 'arcgis.id': 1 });
   userSchema.index({ search: 1 });
   userSchema.set('autoIndex', (app.get('env') === 'development'));
   app.db.model('User', userSchema);

@@ -9,6 +9,7 @@ exports.init = function(req, res){
       oauthMessage: '',
       oauthTwitter: !!req.app.get('twitter-oauth-key'),
       oauthGitHub: !!req.app.get('github-oauth-key'),
+      oauthArcGIS: !! req.app.get('arcgis-oauth-key'),
       oauthFacebook: !!req.app.get('facebook-oauth-key')
     });
   }
@@ -199,6 +200,7 @@ exports.signupTwitter = function(req, res, next) {
           oauthMessage: 'We found a user linked to your Twitter account.',
           oauthTwitter: !!req.app.get('twitter-oauth-key'),
           oauthGitHub: !!req.app.get('github-oauth-key'),
+          oauthArcGIS: !! req.app.get('arcgis-oauth-key'),
           oauthFacebook: !!req.app.get('facebook-oauth-key')
         });
       }
@@ -226,6 +228,7 @@ exports.signupGitHub = function(req, res, next) {
           oauthMessage: 'We found a user linked to your GitHub account.',
           oauthTwitter: !!req.app.get('twitter-oauth-key'),
           oauthGitHub: !!req.app.get('github-oauth-key'),
+          oauthArcGIS: !! req.app.get('arcgis-oauth-key'),
           oauthFacebook: !!req.app.get('facebook-oauth-key')
         });
       }
@@ -252,7 +255,41 @@ exports.signupFacebook = function(req, res, next) {
           oauthMessage: 'We found a user linked to your Facebook account.',
           oauthTwitter: !!req.app.get('twitter-oauth-key'),
           oauthGitHub: !!req.app.get('github-oauth-key'),
+          oauthArcGIS: !! req.app.get('arcgis-oauth-key'),
           oauthFacebook: !!req.app.get('facebook-oauth-key')
+        });
+      }
+    });
+  })(req, res, next);
+};
+
+exports.signupArcGIS = function(req, res, next) {
+  req._passport.instance.authenticate('arcgis', {
+    callbackURL: '/signup/arcgis/callback/'
+  }, function(err, user, info) {
+    if (!info || !info.profile) {
+      return res.redirect('/signup/');
+    }
+
+    req.app.db.models.User.findOne({
+      'arcgis.id': info.profile._json.id
+    }, function(err, user) {
+      if (err) {
+        return next(err);
+      }
+
+      if (!user) {
+        req.session.socialProfile = info.profile;
+        res.render('signup/social', {
+          email: info.profile.email
+        });
+      } else {
+        res.render('signup/index', {
+          oauthMessage: 'We found a user linked to your ArcGIS account.',
+          oauthTwitter: !! req.app.get('twitter-oauth-key'),
+          oauthGitHub: !! req.app.get('github-oauth-key'),
+          oauthArcGIS: !! req.app.get('arcgis-oauth-key'),
+          oauthFacebook: !! req.app.get('facebook-oauth-key')
         });
       }
     });

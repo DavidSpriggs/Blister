@@ -42,6 +42,15 @@ block body
             a.btn.btn-block.btn-default(href='/account/settings/github/')
               i.fa.fa-github.fa-lg
               |  Connect GitHub
+        if oauthArcGIS
+          if oauthArcGISActive
+            a.btn.btn-block.btn-danger(href='/account/settings/arcgis/disconnect/')
+              i.fa.fa-globe.fa-lg
+              |  Disconnect ArcGIS
+          else
+            a.btn.btn-block.btn-default(href='/account/settings/arcgis/')
+              i.fa.fa-globe.fa-lg
+              |  Connect ArcGIS
         if oauthFacebook
           if oauthFacebookActive
             a.btn.btn-block.btn-danger(href='/account/settings/facebook/disconnect/')

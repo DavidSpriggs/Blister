@@ -15,7 +15,7 @@ var renderSettings = function(req, res, next, oauthMessage) {
   };
 
   var getUserData = function(callback) {
-    req.app.db.models.User.findById(req.user.id, 'username email twitter.id github.id facebook.id').exec(function(err, user) {
+    req.app.db.models.User.findById(req.user.id, 'username email twitter.id github.id facebook.id arcgis.id').exec(function(err, user) {
       if (err) {
         callback(err, null);
       }
@@ -41,7 +41,9 @@ var renderSettings = function(req, res, next, oauthMessage) {
       oauthGitHub: !!req.app.get('github-oauth-key'),
       oauthGitHubActive: outcome.user.github ? !!outcome.user.github.id : false,
       oauthFacebook: !!req.app.get('facebook-oauth-key'),
-      oauthFacebookActive: outcome.user.facebook ? !!outcome.user.facebook.id : false
+      oauthFacebookActive: outcome.user.facebook ? !!outcome.user.facebook.id : false,
+      oauthArcGIS: !! req.app.get('arcgis-oauth-key'),
+      oauthArcGISActive: outcome.user.arcgis ? !! outcome.user.arcgis.id : false,
     });
   };
 
@@ -155,6 +157,55 @@ exports.disconnectGitHub = function(req, res, next){
 
 exports.disconnectFacebook = function(req, res, next){
   req.app.db.models.User.findByIdAndUpdate(req.user.id, { facebook: { id: undefined } }, function(err, user) {
+    if (err) {
+      return next(err);
+    }
+
+    res.redirect('/account/settings/');
+  });
+};
+
+exports.connectArcGIS = function(req, res, next) {
+  req._passport.instance.authenticate('arcgis', {
+    callbackURL: '/account/settings/arcgis/callback/'
+  }, function(err, user, info) {
+    if (!info || !info.profile) {
+      return res.redirect('/account/settings/');
+    }
+
+    req.app.db.models.User.findOne({
+      'arcgis.id': info.profile._json.id,
+      _id: {
+        $ne: req.user.id
+      }
+    }, function(err, user) {
+      if (err) {
+        return next(err);
+      }
+
+      if (user) {
+        renderSettings(req, res, next, 'Another user has already connected with that ArcGIS account.');
+      } else {
+        req.app.db.models.User.findByIdAndUpdate(req.user.id, {
+          arcgis: info.profile._json
+        }, function(err, user) {
+          if (err) {
+            return next(err);
+          }
+
+          res.redirect('/account/settings/');
+        });
+      }
+    });
+  })(req, res, next);
+};
+
+exports.disconnectArcGIS = function(req, res, next) {
+  req.app.db.models.User.findByIdAndUpdate(req.user.id, {
+    arcgis: {
+      id: undefined
+    }
+  }, function(err, user) {
     if (err) {
       return next(err);
     }

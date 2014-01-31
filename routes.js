@@ -47,6 +47,8 @@ exports = module.exports = function(app, passport) {
   app.get('/signup/github/callback/', require('./views/signup/index').signupGitHub);
   app.get('/signup/facebook/', passport.authenticate('facebook', { callbackURL: '/signup/facebook/callback/', scope: ['email'] }));
   app.get('/signup/facebook/callback/', require('./views/signup/index').signupFacebook);
+  app.get('/signup/arcgis/', passport.authenticate('arcgis', {callbackURL: '/signup/arcgis/callback/'}));
+  app.get('/signup/arcgis/callback/', require('./views/signup/index').signupArcGIS);
 
   //login/out
   app.get('/login/', require('./views/login/index').init);
@@ -65,6 +67,8 @@ exports = module.exports = function(app, passport) {
   app.get('/login/github/callback/', require('./views/login/index').loginGitHub);
   app.get('/login/facebook/', passport.authenticate('facebook', { callbackURL: '/login/facebook/callback/' }));
   app.get('/login/facebook/callback/', require('./views/login/index').loginFacebook);
+  app.get('/login/arcgis/', passport.authenticate('arcgis', {callbackURL: '/login/arcgis/callback/'}));
+  app.get('/login/arcgis/callback/', require('./views/login/index').loginArcGIS);
 
   //admin
   app.all('/admin*', ensureAuthenticated);
@@ -156,6 +160,9 @@ exports = module.exports = function(app, passport) {
   app.get('/account/settings/facebook/', passport.authenticate('facebook', { callbackURL: '/account/settings/facebook/callback/' }));
   app.get('/account/settings/facebook/callback/', require('./views/account/settings/index').connectFacebook);
   app.get('/account/settings/facebook/disconnect/', require('./views/account/settings/index').disconnectFacebook);
+  app.get('/account/settings/arcgis/', passport.authenticate('arcgis', {callbackURL: '/account/settings/arcgis/callback/'}));
+  app.get('/account/settings/arcgis/callback/', require('./views/account/settings/index').connectArcGIS);
+  app.get('/account/settings/arcgis/disconnect/', require('./views/account/settings/index').disconnectArcGIS);
 
   //route not found
   app.all('*', require('./views/http/index').http404);
