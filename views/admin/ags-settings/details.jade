@@ -1,0 +1,14 @@
+extends ../../../layouts/admin
+
+block head
+  title AGS Settings / Details
+
+block feet
+  script(src='/views/admin/ags-settings/details.min.js?#{cacheBreaker}')
+
+block body
+  div.row
+    div.col-xs-12
+      div#header
+      div#details
+      div#delete
