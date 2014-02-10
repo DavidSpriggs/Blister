@@ -7,3 +7,4 @@ exports.find = function(req, res, next){
 exports.read = function(req, res, next){
   res.render('admin/ags-settings/details', { data: {  } });
 };
+
