@@ -10,4 +10,18 @@ block feet
   script(src='/views/admin/ags-settings/index.min.js?#{cacheBreaker}')
 
 block body
-  h1 AGS Settings
+  div.row
+    div.col-xs-12
+      div#header
+      div#filters
+      div#results-table
+      div#results-paging
+
+  script(type='text/template', id='tmpl-header')
+    div.page-header
+      form.form-inline.pull-right
+        div.input-group
+          input.form-control(name='serviceUrl', type='text', placeholder='service url', value!='')
+          input.form-control(name='userIdColumnName', type='text', placeholder='user id column name', value!='')
+          button.btn.btn-primary.btn-add(type='button') Add New
+      h1 AGS Settings
