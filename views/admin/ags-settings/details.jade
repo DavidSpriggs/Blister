@@ -12,3 +12,53 @@ block body
       div#header
       div#details
       div#delete
+
+  script(type='text/template', id='tmpl-header')
+    div.page-header
+      h1
+        a(href='/admin/ags-settings/') AGS Settings
+        |  / <%- userIdColumnName %>
+
+  script(type='text/template', id='tmpl-details')
+    fieldset
+      legend Details
+      div.alerts
+        |<% _.each(errors, function(err) { %>
+        div.alert.alert-danger.alert-dismissable
+          button.close(type='button', data-dismiss='alert') &times;
+          |<%- err %>
+        |<% }); %>
+        |<% if (success) { %>
+        div.alert.alert-info.alert-dismissable
+          button.close(type='button', data-dismiss='alert') &times;
+          | Changes have been saved.
+        |<% } %>
+      div.control-group(class!='<%- errfor.serviceUrl ? "has-error" : "" %>')
+        label.control-label serviceUrl:
+        input.form-control(type='text', name='serviceUrl', value!='<%- serviceUrl %>')
+        span.help-block <%- errfor.serviceUrl %>
+      div.control-group(class!='<%- errfor.userIdColumnName ? "has-error" : "" %>')
+        label.control-label Name:
+        input.form-control(type='text', name='userIdColumnName', value!='<%- userIdColumnName %>')
+        span.help-block <%- errfor.userIdColumnName %>
+      div.control-group
+        button.btn.btn-primary.btn-update(type='button') Update
+
+  script(type='text/template', id='tmpl-delete')
+    fieldset
+      legend Danger Zone
+      div.alerts
+        |<% _.each(errors, function(err) { %>
+        div.alert.alert-danger.alert-dismissable
+          button.close(type='button', data-dismiss='alert') &times;
+          |<%- err %>
+        |<% }); %>
+      div.control-group
+        span.help-block
+          span.label.label-danger If you do this, it cannot be undone.
+          |&nbsp;
+          span.text-muted You may also create orphaned document relationships too.
+      div.control-group
+        button.btn.btn-danger.btn-delete(type='button') Delete
+
+  script(type='text/template', id='data-record') !{data.record}

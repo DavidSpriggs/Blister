@@ -137,6 +137,9 @@ exports = module.exports = function(app, passport) {
   //admin > ags settings
   app.get('/admin/ags-settings/', require('./views/admin/ags-settings/index').find);
   app.post('/admin/ags-settings/', require('./views/admin/ags-settings/index').create);
+  app.get('/admin/ags-settings/:id/', require('./views/admin/ags-settings/index').read);
+  app.put('/admin/ags-settings/:id/', require('./views/admin/ags-settings/index').update);
+  app.delete('/admin/ags-settings/:id/', require('./views/admin/ags-settings/index').delete);
 
   //account
   app.all('/account*', ensureAuthenticated);

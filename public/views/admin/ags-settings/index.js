@@ -21,11 +21,11 @@
 		model: app.Record,
 		url: '/admin/ags-settings/',
 		parse: function(results) {
-			app.pagingView.model.set({
-				pages: results.pages,
-				items: results.items
-			});
-			app.filterView.model.set(results.filters);
+			// app.pagingView.model.set({
+			// pages: results.pages,
+			// items: results.items
+			// });
+			// app.filterView.model.set(results.filters);
 			return results.data;
 		}
 	});
@@ -84,14 +84,55 @@
 		}
 	});
 
+	app.ResultsView = Backbone.View.extend({
+		el: '#results-table',
+		template: _.template($('#tmpl-results-table').html()),
+		initialize: function() {
+			this.collection = new app.RecordCollection(app.mainView.results.data);
+			this.listenTo(this.collection, 'reset', this.render);
+			this.render();
+		},
+		render: function() {
+			this.$el.html(this.template());
+
+			var frag = document.createDocumentFragment();
+			this.collection.each(function(record) {
+				var view = new app.ResultsRowView({
+					model: record
+				});
+				frag.appendChild(view.render().el);
+			}, this);
+			$('#results-rows').append(frag);
+
+			if (this.collection.length === 0) {
+				$('#results-rows').append($('#tmpl-results-empty-row').html());
+			}
+		}
+	});
+
+	app.ResultsRowView = Backbone.View.extend({
+		tagName: 'tr',
+		template: _.template($('#tmpl-results-row').html()),
+		events: {
+			'click .btn-details': 'viewDetails'
+		},
+		viewDetails: function() {
+			location.href = this.model.url();
+		},
+		render: function() {
+			this.$el.html(this.template(this.model.attributes));
+			return this;
+		}
+	});
+
 	app.MainView = Backbone.View.extend({
 		el: '.page .container',
 		initialize: function() {
 			app.mainView = this;
-			// this.results = JSON.parse(unescape($('#data-results').html()));
+			this.results = JSON.parse(unescape($('#data-results').html()));
 
 			app.headerView = new app.HeaderView();
-			// app.resultsView = new app.ResultsView();
+			app.resultsView = new app.ResultsView();
 			// app.filterView = new app.FilterView();
 			// app.pagingView = new app.PagingView();
 		}
@@ -106,18 +147,18 @@
 			app.mainView = new app.MainView();
 		},
 		default: function() {
-			//if (!app.firstLoad) {
-			// app.resultsView.collection.fetch({
-			// reset: true
-			// });
-			// }
+			if (!app.firstLoad) {
+				app.resultsView.collection.fetch({
+					reset: true
+				});
+			}
 			app.firstLoad = false;
 		},
-		query: function( /*params*/ ) {
-			// app.resultsView.collection.fetch({
-			// data: params,
-			// reset: true
-			// });
+		query: function(params) {
+			app.resultsView.collection.fetch({
+				data: params,
+				reset: true
+			});
 			app.firstLoad = false;
 		}
 	});

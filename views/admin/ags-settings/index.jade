@@ -25,3 +25,25 @@ block body
           input.form-control(name='userIdColumnName', type='text', placeholder='user id column name', value!='')
           button.btn.btn-primary.btn-add(type='button') Add New
       h1 AGS Settings
+  script(type='text/template', id='tmpl-results-table')
+    table.table.table-striped
+      thead
+        tr
+          th
+          th aaaa
+          th.stretch bbbb
+          th id
+      tbody#results-rows
+
+  script(type='text/template', id='tmpl-results-row')
+    td
+      input.btn.btn-default.btn-sm.btn-details(type='button', value='Edit')
+    td <%- serviceUrl %>
+    td <%- userIdColumnName %>
+    td.nowrap <%= _id %>
+
+  script(type='text/template', id='tmpl-results-empty-row')
+    tr
+      td(colspan='4') no documents matched
+
+  script(type='text/template', id='data-results') !{data.results}
