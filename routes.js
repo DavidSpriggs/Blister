@@ -176,6 +176,7 @@ exports = module.exports = function(app, passport) {
   app.get('/arcgis/*/query', require('./views/middleware/index').query);
   app.post('/arcgis/*/addFeatures', require('./views/middleware/index').addFeatures);
   app.post('/arcgis/*/updateFeatures', require('./views/middleware/index').updateFeatures);
+  app.post('/arcgis/*/deleteFeatures', require('./views/middleware/index').deleteFeatures);
 
   //route not found
   app.all('*', require('./views/http/index').http404);

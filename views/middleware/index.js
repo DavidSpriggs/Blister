@@ -126,6 +126,33 @@ exports.updateFeatures = function(req, res) {
 	});
 };
 
+exports.deleteFeatures = function(req, res) {
+	var query = req.body;
+	var subUrl = util.getSubUrl(req.url);
+	util.determineIfServiceInSystem(req, req.url, function(didMatch) {
+		if (didMatch && didMatch.userIdColumnName) {
+			util.getOwnedOids(didMatch.serviceUrl + subUrl, didMatch.userIdColumnName, req.session.passport.user, function(oids) {
+				if (query.hasOwnProperty('where')) {
+					query.where = query.where + " AND OBJECTID IN (" + oids.join(",") + ")";
+					var requestObj = {
+						"method": "POST",
+						form: query,
+						uri: didMatch.serviceUrl + subUrl
+					};
+					request(requestObj).pipe(res);
+				} else {
+					// we only allow deleting via where clause for now.
+					sendError(res, "Problem with request.");
+				}
+			}, function(err) {
+				console.log("ERROR", err);
+			});
+		} else {
+			sendError(res, "This service not in config.");
+		}
+	});
+};
+
 function sendError(res, message) {
 	res.json({
 		success: false,
