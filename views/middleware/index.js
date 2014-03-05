@@ -53,31 +53,83 @@ exports.addFeatures = function(req, res) {
 						};
 						request(requestObj).pipe(res);
 					} else {
-						res.json({
-							"success": false,
-							"message": "Problem with request."
-						});
+						sendError(res, "Problem with request.");
 					}
-
 				} else {
-					res.json({
-						"success": false,
-						"message": "Problem with request."
-					});
+					sendError(res, "Problem with request.");
 				}
-
 			} else {
 				// no features? What are you adding???!?
-				res.json({
-					"success": false,
-					"message": "Problem with request."
-				});
+				sendError(res, "Problem with request.");
 			}
 		} else {
-			res.json({
-				"success": false,
-				"message": "This service not in config."
-			});
+			sendError(res, "This service not in config.");
 		}
 	});
 };
+
+exports.updateFeatures = function(req, res) {
+	var query = req.body;
+	var subUrl = util.getSubUrl(req.url);
+	util.determineIfServiceInSystem(req, req.url, function(didMatch) {
+		if (didMatch && didMatch.userIdColumnName) {
+			if (query.hasOwnProperty('features')) {
+				if (query.features) {
+					// Get the features, add the user ID to the USER_ID column (as defined in the Blister config).
+					var features = JSON.parse(query.features);
+					if (features.length > 0) {
+
+						// Get the OBJECTIDs of the features that this user is ALLOWED to update, and only update those features.
+						util.getOwnedOids(didMatch.serviceUrl + subUrl, didMatch.userIdColumnName, req.session.passport.user, function(oids) {
+							var featuresToUpdate = [];
+
+							features.forEach(function(feature) {
+								if (feature.attributes.hasOwnProperty('OBJECTID')) {
+									if (oids.indexOf(feature.attributes.OBJECTID) > -1) {
+										featuresToUpdate.push(feature);
+									}
+								}
+							});
+
+							// if featuresToUpdate is empty, that none of the features that the user sent in
+							// are allowed to be edited.
+							if (featuresToUpdate.length > 0) {
+								query.features = JSON.stringify(featuresToUpdate);
+
+								var requestObj = {
+									"method": "POST",
+									form: query,
+									uri: didMatch.serviceUrl + subUrl
+								};
+								request(requestObj).pipe(res);
+							} else {
+								sendError(res, "No features that you have access to update.");
+							}
+
+						}, function(error) {
+							console.log(error);
+						});
+
+					} else {
+						sendError(res, "Problem with request.");
+					}
+				} else {
+					sendError(res, "Problem with request.");
+				}
+			} else {
+				// no features? What are you adding???!?
+				sendError(res, "Problem with request.");
+			}
+		} else {
+			sendError(res, "This service not in config.");
+		}
+	});
+};
+
+function sendError(res, message) {
+	res.json({
+		success: false,
+		message: message
+	});
+	return;
+}

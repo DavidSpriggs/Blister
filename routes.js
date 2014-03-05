@@ -175,6 +175,7 @@ exports = module.exports = function(app, passport) {
                                             // User will be redirected to login page if not.
   app.get('/arcgis/*/query', require('./views/middleware/index').query);
   app.post('/arcgis/*/addFeatures', require('./views/middleware/index').addFeatures);
+  app.post('/arcgis/*/updateFeatures', require('./views/middleware/index').updateFeatures);
 
   //route not found
   app.all('*', require('./views/http/index').http404);
