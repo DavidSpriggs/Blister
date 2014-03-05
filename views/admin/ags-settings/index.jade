@@ -30,9 +30,8 @@ block body
       thead
         tr
           th
-          th aaaa
-          th.stretch bbbb
-          th id
+          th Service URL
+          th.stretch User ID Column Name
       tbody#results-rows
 
   script(type='text/template', id='tmpl-results-row')
@@ -40,7 +39,6 @@ block body
       input.btn.btn-default.btn-sm.btn-details(type='button', value='Edit')
     td <%- serviceUrl %>
     td <%- userIdColumnName %>
-    td.nowrap <%= _id %>
 
   script(type='text/template', id='tmpl-results-empty-row')
     tr

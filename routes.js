@@ -171,6 +171,12 @@ exports = module.exports = function(app, passport) {
   app.get('/account/settings/arcgis/callback/', require('./views/account/settings/index').connectArcGIS);
   app.get('/account/settings/arcgis/disconnect/', require('./views/account/settings/index').disconnectArcGIS);
 
+  app.all('/arcgis*', ensureAuthenticated); // Any route that begins with /arcgis should be authenticated.
+                                            // User will be redirected to login page if not.
+  app.get('/arcgis/*/query', require('./views/middleware/index').query);
+  app.post('/arcgis/*/addFeatures', require('./views/middleware/index').addFeatures);
+  app.post('/arcgis/*/updateFeatures', require('./views/middleware/index').updateFeatures);
+
   //route not found
   app.all('*', require('./views/http/index').http404);
 };
