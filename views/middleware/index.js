@@ -3,6 +3,28 @@
 var util = require('./util'),
 	request = require('request');
 
+exports.fsInfo = function(req, res) {
+	var query = req.query;
+	var subUrl = util.getSubUrl(req.url);
+	util.determineIfServiceInSystem(req, req.url, function(didMatch) {
+		if (didMatch && didMatch.userIdColumnName) {
+
+			var requestObj = {
+				"rejectUnauthorized": false,
+				"method": "GET",
+				qs: query,
+				uri: didMatch.serviceUrl + subUrl
+			};
+			request(requestObj).pipe(res);
+		} else {
+			res.json({
+				"success": false,
+				"message": "Problem with config."
+			});
+		}
+	});
+};
+
 exports.query = function(req, res) {
 	var query = req.query;
 	var subUrl = util.getSubUrl(req.url);
